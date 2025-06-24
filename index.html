@@ -378,8 +378,33 @@
       }
       #messages,
       #chat-form {
-        padding-left: 4vw;
-        padding-right: 4vw;
+        padding: 0 2vw 10px 2vw;
+        gap: 6px;
+      }
+      #chat-input {
+        padding: 12px 10px;
+        font-size: 1rem;
+        border-radius: 16px;
+      }
+      #send-btn {
+        padding: 10px 16px;
+        font-size: 1rem;
+        border-radius: 14px;
+      }
+    }
+    
+      @media (max-width: 400px) {
+      #chat-form {
+        padding: 0 1vw 8px 1vw;
+        gap: 4px;
+      }
+      #chat-input {
+        font-size: 0.95rem;
+        padding: 10px 6px;
+      }
+      #send-btn {
+        font-size: 0.95rem;
+        padding: 8px 10px;
       }
     }
   </style>
