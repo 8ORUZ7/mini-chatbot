@@ -1,6 +1,7 @@
 # Mini-Chatbot
 
-**Mini-Chatbot** is an AI-powered chatbot designed for lightweight conversations, it is powered by Gemini AI. Please note that some responses may be vague or imperfect, as the AI model is still being improved and trained.
+**Mini-Chatbot** is an AI-powered chatbot designed for lightweight conversations, it is powered by Gemini AI. 
+> Please note that some responses may be vague or imperfect, as the AI model is still being improved and trained.
 
 Website Link: [mini-chatbotv2](https://8oruz7.github.io/mini-chatbot)
 
