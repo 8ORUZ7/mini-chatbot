@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image" href="https://raw.githubusercontent.com/8ORUZ7/8ORUZ7.github.io/refs/heads/main/site_logo.png">
+  <title>ai-chatbot</title>
+  <style>
+    :root {
+      --bg: #1e1e1e;
+      --card-bg: #2a2a2a;
+      --text: #f0f0f0;
+      --text-muted: #bbbbbb;
+      --accent: #007bff;
+
+      --user-bg: var(--accent);
+      --user-color: #fff;
+      --bot-bg: #444;
+      --bot-color: var(--text);
+
+      --textarea-bg: #333;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #chat-container {
+      background: var(--card-bg);
+      width: 90%;
+      max-width: 600px;
+      height: 90vh;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    header {
+      padding: 20px;
+      font-size: 1.6em;
+      font-weight: bold;
+      background: transparent;
+      text-align: center;
+    }
+
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 12px 15px;
+      border-radius: 10px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: var(--user-bg);
+      color: var(--user-color);
+    }
+
+    .bot {
+      align-self: flex-start;
+      background: var(--bot-bg);
+      color: var(--bot-color);
+    }
+
+    .timestamp {
+      font-size: 0.7em;
+      color: var(--text-muted);
+      margin-top: 5px;
+      text-align: right;
+    }
+
+    form {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      background: var(--card-bg);
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      background: var(--textarea-bg);
+      color: var(--text);
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: var(--accent);
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .typing {
+      font-style: italic;
+      opacity: 0.6;
+    }
+
+    .toggle-theme {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #333;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+    }
+    .toggle-theme svg {
+      display: block;
+      stroke: currentColor;
+      fill: none;
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <button class="toggle-theme" aria-label="Toggle theme"></button>
+    <header>Mini AI Chatbot</header>
+
+    <div id="chat"></div>
+
+    <form onsubmit="sendMessage(event)">
+      <textarea id="input" rows="2" placeholder="Ask me anything..." required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const sunIcon = `
+      <svg viewBox="0 0 24 24" fill="#000" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="5" />
+        <g stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </g>
+      </svg>
+    `;
+
+    const moonIcon = `
+      <svg viewBox="0 0 24 24" fill="#000" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+      </svg>
+    `;
+
+    const endpoint = "https://script.google.com/macros/s/AKfycbxEAkcPqeNh11-qWEOnVkvrBDE90pxT1PJt7TCADP9ExOrd1ua8XuuYlt2md9yrcjM/exec";
+    const chatDiv = document.getElementById("chat");
+    const input = document.getElementById("input");
+    const toggleBtn = document.querySelector(".toggle-theme");
+
+
+    let isDark = true;
+
+    function setDarkMode() {
+      const root = document.documentElement;
+      root.style.setProperty('--bg', '#1e1e1e');
+      root.style.setProperty('--card-bg', '#2a2a2a');
+      root.style.setProperty('--text', '#f0f0f0');
+      root.style.setProperty('--text-muted', '#bbbbbb');
+      root.style.setProperty('--user-bg', '#007bff');
+      root.style.setProperty('--user-color', '#fff');
+      root.style.setProperty('--bot-bg', '#444');
+      root.style.setProperty('--bot-color', '#f0f0f0');
+      root.style.setProperty('--textarea-bg', '#333');
+      toggleBtn.innerHTML = moonIcon;
+      isDark = true;
+    }
+
+    function setLightMode() {
+      const root = document.documentElement;
+      root.style.setProperty('--bg', '#f4f4f4');
+      root.style.setProperty('--card-bg', '#ffffff');
+      root.style.setProperty('--text', '#1e1e1e');
+      root.style.setProperty('--text-muted', '#555');
+      root.style.setProperty('--user-bg', '#007bff');
+      root.style.setProperty('--user-color', '#fff');
+      root.style.setProperty('--bot-bg', '#eee');
+      root.style.setProperty('--bot-color', '#1e1e1e');
+      root.style.setProperty('--textarea-bg', '#fff');
+      toggleBtn.innerHTML = sunIcon;
+      isDark = false;
+    }
+
+    window.onload = () => {
+      setDarkMode();  
+
+      const saved = JSON.parse(localStorage.getItem("chatHistory")) || [];
+      saved.forEach(({ role, text, time }) => renderMessage(role, text, time));
+    };
+
+    function saveMessage(role, text, time = new Date().toLocaleTimeString()) {
+      const saved = JSON.parse(localStorage.getItem("chatHistory")) || [];
+      saved.push({ role, text, time });
+      localStorage.setItem("chatHistory", JSON.stringify(saved));
+    }
+
+    function renderMessage(role, text, time = new Date().toLocaleTimeString()) {
+      const msg = document.createElement("div");
+      msg.className = `message ${role}`;
+      msg.innerHTML = `<div>${text}</div><div class="timestamp">${time}</div>`;
+      chatDiv.appendChild(msg);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    function showTyping() {
+      const typing = document.createElement("div");
+      typing.className = "message bot typing";
+      typing.innerText = "Typing...";
+      typing.id = "typing";
+      chatDiv.appendChild(typing);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    function removeTyping() {
+      const typing = document.getElementById("typing");
+      if (typing) typing.remove();
+    }
+
+    async function sendMessage(e) {
+      e.preventDefault();
+      const msg = input.value.trim();
+      if (!msg) return;
+      renderMessage("user", msg);
+      saveMessage("user", msg);
+      input.value = "";
+      showTyping();
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ msg }),
+        });
+        const data = await res.json();
+
+        setTimeout(() => {
+          removeTyping();
+          renderMessage("bot", data.reply);
+          saveMessage("bot", data.reply);
+        }, 1000 + Math.random() * 1000);
+      } catch (err) {
+        removeTyping();
+        const errorMsg = "⚠️ Error: Unable to reach server.";
+        renderMessage("bot", errorMsg);
+        saveMessage("bot", errorMsg);
+        console.error(err);
+      }
+    }
+
+    toggleBtn.onclick = () => {
+      if (isDark) {
+        setLightMode();
+      } else {
+        setDarkMode();
+      }
+    };
+  </script>
+</body>
+</html>
