@@ -5,7 +5,7 @@ import requests
 app = Flask(__name__)
 CORS(app) 
 
-APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbx_X1xsemDfdnS1dFuPup7cCFch-t5I62gkv-kQfxsPMPxOMNzzgoVmfbeMDNK-NNzx/exec"
+APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbx3eCBvLDacnEhh9cE9EnVJYAz3wGgvL1fPeoqAX-bYrT1SontzOzNoWkgSkhhy_sGx/exec"
 
 @app.route("/chat", methods=["POST"])
 def chat():
