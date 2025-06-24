@@ -32,6 +32,10 @@
       --mono-x-light: #292929;
       --mono-x-hover-dark: #fff;
       --mono-x-hover-light: #000;
+      --emoji-btn-bg: #222;
+      --emoji-btn-bg-light: #eee;
+      --emoji-btn-hover: #333;
+      --emoji-btn-hover-light: #ddd;
     }
 
     body {
@@ -134,7 +138,7 @@
       border: 1.5px solid var(--mono-btn-border-dark);
       padding: 4px 16px;
       border-radius: 8px;
-      font-size: 1 rem;
+      font-size: 1rem;
       cursor: pointer;
       transition: background var(--transition), color var(--transition), border var(--transition);
       margin-left: 12px;
@@ -161,14 +165,13 @@
       padding: 0 18px;
       margin: 0;
     }
-
     #convo-list li {
       padding: 10px 12px;
       margin-bottom: 10px;
       border-radius: var(--border-radius);
       background: var(--chat-dark);
       color: var(--text-dark);
-      font-size: 1 rem;
+      font-size: 1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -213,7 +216,7 @@
       background: none;
       border: none;
       color: var(--mono-x-dark);
-      font-size: 1 rem;
+      font-size: 1rem;
       margin-left: 4px;
       cursor: pointer;
       padding: 3px 6px;
@@ -254,11 +257,10 @@
       max-height: 66vh;
       scrollbar-width: thin;
     }
-
     .bubble {
       max-width: 70%;
       margin: 14px 0;
-      padding: 16px 22px 25px 22px;
+      padding: 14px 20px 16px 20px;
       border-radius: var(--border-radius);
       font-size: 1.2rem;
       word-break: break-word;
@@ -266,7 +268,6 @@
       position: relative;
       transition: background var(--transition);
     }
-
     .bubble.user {
       background: var(--bubble-user-dark);
       color: var(--text-dark);
@@ -277,7 +278,6 @@
       background: var(--bubble-user-light);
       color: var(--text-light);
     }
-
     .bubble.ai {
       background: var(--bubble-ai-dark);
       color: var(--text-dark);
@@ -288,15 +288,99 @@
       background: var(--bubble-ai-light);
       color: var(--text-light);
     }
-
     .bubble .timestamp {
       font-size: 0.8rem;
       color: #aaa;
-      position: absolute;
-      right: 22px;
-      bottom: 8px;
+      position: static;
+      margin-top: 6px;
+      text-align: right;
+    }
+    /* Copy, Emoji bar, User Edit - now static */
+    .bubble .ai-tools {
+      position: static;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      margin-bottom: 0;
     }
 
+    .bubble .user-tools {
+      position: static;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      margin-bottom: 0;
+      justify-content: flex-end; 
+      margin-right: 0px;       
+    }
+
+    .copy-btn,
+    .emoji-btn,
+    .edit-btn {
+      background: var(--emoji-btn-bg);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 2px 6px;
+      font-size: 1.15em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      transition: background var(--transition), color var(--transition);
+    }
+    .copy-btn:hover,
+    .emoji-btn:hover,
+    .edit-btn:hover {
+      background: var(--emoji-btn-hover);
+      color: var(--accent);
+    }
+    body.light .copy-btn,
+    body.light .emoji-btn,
+    body.light .edit-btn {
+      background: var(--emoji-btn-bg-light);
+      color: #111;
+    }
+    body.light .copy-btn:hover,
+    body.light .emoji-btn:hover,
+    body.light .edit-btn:hover {
+      background: var(--emoji-btn-hover-light);
+      color: var(--accent);
+    }
+    .emoji-bar {
+      display: inline-flex;
+      gap: 2px;
+    }
+    .emoji-react {
+      background: none;
+      border: none;
+      font-size: 1.12em;
+      cursor: pointer;
+      padding: 0 2px;
+      margin-left: 2px;
+      border-radius: 4px;
+      transition: background var(--transition);
+    }
+    .emoji-react.selected {
+      background: var(--accent);
+      color: #111;
+    }
+    .emoji-custom-input {
+      width: 2.5em;
+      font-size: 1em;
+      border: 1px solid #888;
+      border-radius: 4px;
+      margin-left: 3px;
+      background: transparent;
+      color: inherit;
+      padding: 1px 3px;
+    }
+    body.light .emoji-custom-input {
+      border: 1px solid #bbb;
+      background: #fff;
+      color: #222;
+    }
     .bubble code, .bubble pre {
       background: #181818;
       color: #ffd700;
@@ -310,20 +394,32 @@
       background: #eaeaea;
       color: #161616;
     }
-
     .bubble pre {
       padding: 14px 18px;
       margin: 7px 0;
       white-space: pre-wrap;
     }
-
+    .user-edit-input {
+      width: 90%;
+      font-size: 1.13rem;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 6px 10px;
+      margin-bottom: 3px;
+    }
+    body.light .user-edit-input {
+      background: #fff;
+      color: #222;
+      border: 1px solid #bbb;
+    }
     #chat-form {
       display: flex;
       align-items: center;
       gap: 12px;
       padding: 0 32px 13px 32px;
     }
-
     #chat-input {
       flex: 1;
       padding: 14px 18px;
@@ -338,7 +434,6 @@
       color: var(--text-light);
       background: #ddd7;
     }
-
     #send-btn {
       background: #8887;
       color: var(--text-dark);
@@ -353,7 +448,6 @@
       color: var(--text-light);
       background: #ccc7;
     }
-
     @media (max-width: 900px) {
       #chatbot-app {
         max-width: 98vw;
@@ -364,7 +458,6 @@
         padding-right: 10px;
       }
     }
-
     @media (max-width: 600px) {
       #chatbot-app {
         max-width: 100vw;
@@ -392,8 +485,7 @@
         border-radius: 14px;
       }
     }
-    
-      @media (max-width: 400px) {
+    @media (max-width: 400px) {
       #chat-form {
         padding: 0 1vw 8px 1vw;
         gap: 4px;
@@ -418,7 +510,6 @@
         <span id="theme-icon"></span>
       </button>
     </header>
-
     <aside id="sidebar" class="hidden">
       <div class="sidebar-header">
         <span>Topics</span>
@@ -426,7 +517,6 @@
       </div>
       <ul id="convo-list"></ul>
     </aside>
-
     <main id="chat-container">
       <div id="messages"></div>
       <form id="chat-form" autocomplete="off">
@@ -441,7 +531,6 @@
     </main>
   </div>
   <script>
-
     function escapeHtml(str) {
       return str.replace(/[&<>"']/g, m =>
         m === "&" ? "&amp;" : m === "<" ? "&lt;" : m === ">" ? "&gt;" : m === '"' ? "&quot;" : "&#39;");
@@ -464,6 +553,7 @@
     }
   </script>
   <script>
+    // Theme toggle
     const themeBtn = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
     const sunIcon = `
@@ -500,6 +590,7 @@
     themeBtn.onclick = () => setTheme(document.body.classList.contains('light') ? 'dark' : 'light');
     setTheme(localStorage.getItem('theme') || 'dark');
 
+    // Sidebar and convo management
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('menu-toggle');
     menuBtn.onclick = (e) => {
@@ -511,11 +602,9 @@
         && !sidebar.contains(e.target) 
         && e.target !== menuBtn) sidebar.classList.add('hidden');
     };
-
     let conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
     let selectedConvo = localStorage.getItem('selectedConvo') || null;
     const convoList = document.getElementById('convo-list');
-
     function renderConvos() {
       convoList.innerHTML = '';
       conversations.forEach((c, i) => {
@@ -534,7 +623,6 @@
               </svg>
             </button>
           </span>`;
-
         li.onclick = (e) => {
           if (e.target.closest('.del-btn') || e.target.closest('.edit-btn') || li.querySelector('.rename-input')) return;
           selectedConvo = i;
@@ -543,7 +631,6 @@
           renderMessages();
           sidebar.classList.add('hidden');
         };
-
         li.querySelector('.edit-btn').onclick = (e) => {
           e.stopPropagation();
           const input = document.createElement('input');
@@ -568,7 +655,6 @@
           input.focus();
           input.select();
         };
-
         li.querySelector('.del-btn').onclick = (e) => {
           e.stopPropagation();
           conversations.splice(i, 1);
@@ -596,21 +682,161 @@
     }
     renderConvos();
 
+    // Emoji set (can be expanded by user)
+    let customEmojis = JSON.parse(localStorage.getItem('customEmojis') || '[]');
+    const defaultEmojis = ["👍🏽", "😆", "❤️"];
+    function getEmojiSet() {
+      return [...new Set([...defaultEmojis, ...customEmojis])];
+    }
+    // React state per message
+    let reactions = JSON.parse(localStorage.getItem('msgReactions') || '{}');
+    // Backend endpoint
     const endpoint = "https://mini-chatbot-production.up.railway.app/chat";
     const messagesDiv = document.getElementById('messages');
+
     function renderMessages() {
       messagesDiv.innerHTML = '';
       let convo = conversations[selectedConvo];
       if (!convo) return;
-      convo.messages.forEach(msg => {
+      convo.messages.forEach((msg, idx) => {
         const bubble = document.createElement('div');
         bubble.className = `bubble ${msg.role}`;
+        let tools = null;
+        // --- User message edit tools (edit) ---
+        if (msg.role === 'user') {
+          tools = document.createElement('div');
+          tools.className = 'user-tools';
+          // Edit button
+          const editBtn = document.createElement('button');
+          editBtn.className = 'edit-btn';
+          editBtn.type = 'button';
+          editBtn.title = 'Edit message';
+          editBtn.innerText = '✎';
+          editBtn.onclick = function(e) {
+            e.stopPropagation();
+            // Replace bubble content with editable input
+            const editInput = document.createElement('input');
+            editInput.className = 'user-edit-input';
+            editInput.type = 'text';
+            editInput.value = msg.content;
+            editInput.onkeydown = async function(ev) {
+              if (ev.key === 'Enter' && editInput.value.trim()) {
+                await updateUserMessage(idx, editInput.value.trim());
+              }
+            };
+            editInput.onblur = async function() {
+              if (editInput.value.trim()) {
+                await updateUserMessage(idx, editInput.value.trim());
+              } else {
+                renderMessages();
+              }
+            };
+            bubble.innerHTML = '';
+            bubble.appendChild(editInput);
+            bubble.appendChild(tools);
+            const ts = document.createElement('div');
+            ts.className = 'timestamp';
+            ts.textContent = msg.time;
+            bubble.appendChild(ts);
+            editInput.focus();
+            editInput.select();
+          };
+          tools.appendChild(editBtn);
+        }
+
+        if (msg.role === 'ai') {
+          tools = document.createElement('div');
+          tools.className = 'ai-tools';
+
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.type = 'button';
+          copyBtn.title = 'Copy AI reply';
+          copyBtn.innerText = '❏';
+          copyBtn.onclick = function(e) {
+            e.stopPropagation();
+            let tempDiv = document.createElement('div');
+            tempDiv.innerHTML = marked(msg.content || "");
+            navigator.clipboard.writeText(tempDiv.innerText.trim() || tempDiv.textContent.trim());
+            copyBtn.innerText = '✔';
+            setTimeout(() => { copyBtn.innerText = '❏'; }, 1200);
+          };
+          tools.appendChild(copyBtn);
+
+          const emojiBar = document.createElement('span');
+          emojiBar.className = 'emoji-bar';
+          let reactSet = getEmojiSet();
+          let thisMsgReacts = (reactions[selectedConvo]?.[idx]) || {};
+          reactSet.forEach(emoji => {
+            const reactBtn = document.createElement('button');
+            reactBtn.className = 'emoji-react';
+            reactBtn.type = 'button';
+            reactBtn.innerText = emoji;
+            if (thisMsgReacts && thisMsgReacts[emoji]) {
+              reactBtn.classList.add('selected');
+            }
+            if (thisMsgReacts && thisMsgReacts[emoji] && thisMsgReacts[emoji] > 1) {
+              reactBtn.innerText += ` ${thisMsgReacts[emoji]}`;
+            }
+            reactBtn.onclick = function(e) {
+              e.stopPropagation();
+              if (!reactions[selectedConvo]) reactions[selectedConvo] = [];
+              if (!reactions[selectedConvo][idx]) reactions[selectedConvo][idx] = {};
+              let current = reactions[selectedConvo][idx][emoji] || 0;
+              reactions[selectedConvo][idx][emoji] = current === 1 ? 0 : 1;
+              Object.keys(reactions[selectedConvo][idx]).forEach(k => {
+                if (!reactions[selectedConvo][idx][k]) delete reactions[selectedConvo][idx][k];
+              });
+              localStorage.setItem('msgReactions', JSON.stringify(reactions));
+              renderMessages();
+            };
+            emojiBar.appendChild(reactBtn);
+          });
+ 
+          const addEmojiBtn = document.createElement('button');
+          addEmojiBtn.className = 'emoji-btn';
+          addEmojiBtn.type = 'button';
+          addEmojiBtn.title = "Add or remove emoji";
+          addEmojiBtn.innerText = "+";
+          addEmojiBtn.onclick = function(e) {
+            e.stopPropagation();
+            let action = prompt("Type '+' to add emoji or '-' to remove emoji:");
+            if (action === "+") {
+              let emoji = prompt("Add a custom emoji (single character):", "🤖");
+              if (emoji && emoji.length <= 2 && /\p{Emoji}/u.test(emoji)) {
+                customEmojis.push(emoji);
+                customEmojis = [...new Set(customEmojis)];
+                localStorage.setItem('customEmojis', JSON.stringify(customEmojis));
+                renderMessages();
+              } else if (emoji) {
+                alert("Please enter a valid emoji character.");
+              }
+            } else if (action === "-") {
+              if (customEmojis.length === 0) {
+                alert("No custom emoji to remove.");
+                return;
+              }
+              let emojiToRemove = prompt("Which custom emoji do you want to remove? (Type the emoji itself)\nCurrent: " + customEmojis.join(" "));
+              if (emojiToRemove && customEmojis.includes(emojiToRemove)) {
+                customEmojis = customEmojis.filter(e => e !== emojiToRemove);
+                localStorage.setItem('customEmojis', JSON.stringify(customEmojis));
+                renderMessages();
+              } else if (emojiToRemove) {
+                alert("Emoji not found in custom emoji list.");
+              }
+            }
+          };
+          emojiBar.appendChild(addEmojiBtn);
+          tools.appendChild(emojiBar);
+        }
 
         if (msg.role === 'ai') {
           bubble.innerHTML = marked(msg.content || "");
         } else {
           bubble.textContent = msg.content;
         }
+
+        if (tools) bubble.appendChild(tools);
 
         const ts = document.createElement('div');
         ts.className = 'timestamp';
@@ -621,6 +847,45 @@
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
     renderMessages();
+
+
+    async function updateUserMessage(msgIdx, newContent) {
+      let convo = conversations[selectedConvo];
+      if (!convo) return;
+      convo.messages[msgIdx].content = newContent;
+      convo.messages[msgIdx].time = new Date().toLocaleTimeString([], { hour12: false });
+
+      let aiIdx = msgIdx + 1;
+      if (convo.messages[aiIdx] && convo.messages[aiIdx].role === 'ai') {
+        renderMessages();
+        showTyping();
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ msg: newContent }),
+          });
+          removeTyping();
+          if (!res.ok) throw new Error(`Server returned ${res.status}`);
+          const data = await res.json();
+          const reply = data?.reply || "⚠︎ No reply received.";
+          convo.messages[aiIdx].content = reply;
+          convo.messages[aiIdx].time = new Date().toLocaleTimeString([], { hour12: false });
+          saveChat();
+          renderMessages();
+        } catch (err) {
+          removeTyping();
+          convo.messages[aiIdx].content = "⚠︎ Error: " + err.message;
+          convo.messages[aiIdx].time = new Date().toLocaleTimeString([], { hour12: false });
+          saveChat();
+          renderMessages();
+        }
+      } else {
+        saveChat();
+        renderMessages();
+      }
+      saveChat();
+    }
 
     function showTyping() {
       let typing = document.createElement('div');
@@ -634,7 +899,6 @@
       let typing = document.getElementById('typing-bubble');
       if (typing) typing.remove();
     }
-
     const chatForm = document.getElementById('chat-form');
     const chatInput = document.getElementById('chat-input');
     chatForm.onsubmit = async function(e) {
@@ -649,7 +913,6 @@
         chatInput.value = '';
         return;
       }
-
       const now = new Date();
       const time = now.toLocaleTimeString([], { hour12: false });
       conversations[selectedConvo].messages.push({
@@ -661,7 +924,6 @@
       chatInput.value = '';
       saveChat();
       showTyping();
-
       try {
         const res = await fetch(endpoint, {
           method: "POST",
@@ -669,12 +931,9 @@
           body: JSON.stringify({ msg: text }),
         });
         removeTyping();
-
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
-
         const data = await res.json();
-        const reply = data?.reply || "⚠️ No reply received.";
-
+        const reply = data?.reply || "⚠︎ No reply received.";
         conversations[selectedConvo].messages.push({
           role: 'ai',
           content: reply,
@@ -684,7 +943,7 @@
         renderMessages();
       } catch (err) {
         removeTyping();
-        const errorMsg = `⚠️ Error: ${err.message}`;
+        const errorMsg = `⚠︎ Error: ${err.message}`;
         conversations[selectedConvo].messages.push({
           role: 'ai',
           content: errorMsg,
@@ -697,7 +956,6 @@
     function saveChat() {
       localStorage.setItem('conversations', JSON.stringify(conversations));
     }
-
     chatInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         chatForm.dispatchEvent(new Event('submit'));
