@@ -7,301 +7,678 @@
   <title>ai-chatbot</title>
   <style>
     :root {
-      --bg: #1e1e1e;
-      --card-bg: #2a2a2a;
-      --text: #f0f0f0;
-      --text-muted: #bbbbbb;
-      --accent: #007bff;
-
-      --user-bg: var(--accent);
-      --user-color: #fff;
-      --bot-bg: #444;
-      --bot-color: var(--text);
-
-      --textarea-bg: #333;
+      --bg-dark: #222;
+      --bg-light: #f5f5f5;
+      --chat-dark: #333;
+      --chat-light: #fff;
+      --bubble-user-dark: #888;
+      --bubble-user-light: #ccc;
+      --bubble-ai-dark: #181818;
+      --bubble-ai-light: #eaeaea;
+      --text-dark: #eee;
+      --text-light: #161616;
+      --accent: #ffd700;
+      --border-radius: 18px;
+      --sidebar-bg-dark: #18191a;
+      --sidebar-bg-light: #f1f2f3;
+      --transition: 0.2s;
+      --mono-btn-bg-dark: #2b2b2b;
+      --mono-btn-bg-light: #e0e0e0;
+      --mono-btn-hover-dark: #353535;
+      --mono-btn-hover-light: #cccccc;
+      --mono-btn-border-dark: #444;
+      --mono-btn-border-light: #bbb;
+      --mono-x-dark: #d3d3d3;
+      --mono-x-light: #292929;
+      --mono-x-hover-dark: #fff;
+      --mono-x-hover-light: #000;
     }
 
     body {
       margin: 0;
-      font-family: 'Courier New', monospace;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background: radial-gradient(circle, #444 0%, #000 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      transition: background var(--transition);
     }
 
-    #chat-container {
-      background: var(--card-bg);
-      width: 90%;
-      max-width: 600px;
-      height: 90vh;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    #chatbot-app {
+      width: 100%;
+      max-width: 800px;
+      min-width: 320px;
+      margin: 40px auto;
+      background: var(--bg-dark);
+      border-radius: 30px;
+      box-shadow: 0 0 60px 5px #000;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      transition: background var(--transition);
       position: relative;
     }
 
+    body.light #chatbot-app {
+      background: var(--bg-light);
+    }
+
     header {
-      padding: 20px;
-      font-size: 1.6em;
-      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
       background: transparent;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      color: var(--text-dark);
+      letter-spacing: 1.5px;
+      font-weight: 600;
       text-align: center;
-    }
-
-    #chat {
       flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
     }
 
-    .message {
-      max-width: 75%;
-      padding: 12px 15px;
-      border-radius: 10px;
-      line-height: 1.4;
-      white-space: pre-wrap;
+    body.light header h1 {
+      color: var(--text-light);
     }
 
-    .user {
-      align-self: flex-end;
-      background: var(--user-bg);
-      color: var(--user-color);
-    }
-
-    .bot {
-      align-self: flex-start;
-      background: var(--bot-bg);
-      color: var(--bot-color);
-    }
-
-    .timestamp {
-      font-size: 0.7em;
-      color: var(--text-muted);
-      margin-top: 5px;
-      text-align: right;
-    }
-
-    form {
-      display: flex;
-      gap: 10px;
-      padding: 15px;
-      background: var(--card-bg);
-    }
-
-    textarea {
-      flex: 1;
-      resize: none;
-      padding: 10px;
-      border-radius: 5px;
+    #menu-toggle, #theme-toggle {
+      background: transparent;
       border: none;
-      background: var(--textarea-bg);
-      color: var(--text);
-    }
-
-    button {
-      padding: 10px 15px;
-      border: none;
-      background: var(--accent);
-      color: white;
-      border-radius: 5px;
+      color: var(--text-dark);
+      font-size: 2rem;
       cursor: pointer;
-    }
-
-    .typing {
-      font-style: italic;
-      opacity: 0.6;
-    }
-
-    .toggle-theme {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: #333;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 16px;
-      color: white;
-      cursor: pointer;
+      transition: color var(--transition);
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
+      padding: 0;
     }
-    .toggle-theme svg {
+    #theme-toggle svg {
       display: block;
-      stroke: currentColor;
-      fill: none;
-      width: 24px;
-      height: 24px;
-      vertical-align: middle;
+    }
+    body.light #menu-toggle, body.light #theme-toggle {
+      color: var(--text-light);
+    }
+
+    #sidebar {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 260px;
+      background: var(--sidebar-bg-dark);
+      color: var(--text-dark);
+      padding: 18px 0 0 0;
+      box-shadow: 2px 0 15px #0007;
+      z-index: 10;
+      transition: transform var(--transition), background var(--transition);
+      transform: translateX(-100%);
+      height: 100%;
+    }
+    body.light #sidebar {
+      background: var(--sidebar-bg-light);
+      color: var(--text-light);
+    }
+    #sidebar:not(.hidden) {
+      transform: translateX(0);
+    }
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 18px 10px 18px;
+    }
+    #new-convo {
+      background: var(--mono-btn-bg-dark);
+      color: var(--text-dark);
+      border: 1.5px solid var(--mono-btn-border-dark);
+      padding: 4px 16px;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition), border var(--transition);
+      margin-left: 12px;
+      outline: none;
+    }
+    #new-convo:hover, #new-convo:focus {
+      background: var(--mono-btn-hover-dark);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    body.light #new-convo {
+      background: var(--mono-btn-bg-light);
+      color: var(--text-light);
+      border: 1.5px solid var(--mono-btn-border-light);
+    }
+    body.light #new-convo:hover, body.light #new-convo:focus {
+      background: var(--mono-btn-hover-light);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    #convo-list {
+      list-style: none;
+      padding: 0 18px;
+      margin: 0;
+    }
+
+    #convo-list li {
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border-radius: var(--border-radius);
+      background: var(--chat-dark);
+      color: var(--text-dark);
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: background var(--transition), color var(--transition), box-shadow var(--transition), border var(--transition);
+      border: 2px solid transparent;
+    }
+    body.light #convo-list li {
+      background: var(--chat-light);
+      color: var(--text-light);
+    }
+
+    #convo-list li.selected {
+      border: 2px solid var(--accent);
+      background: var(--bubble-user-dark);
+    }
+    body.light #convo-list li.selected {
+      background: var(--bubble-user-light);
+    }
+
+    .rename-input {
+      background: none;
+      border: 1.2px dashed var(--mono-btn-border-dark);
+      border-radius: 6px;
+      color: inherit;
+      font-size: 1.05rem;
+      width: 85%;
+      padding: 2px 8px;
+    }
+    body.light .rename-input {
+      border-color: var(--mono-btn-border-light);
+    }
+
+    .convo-actions {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    #convo-list .action-btn {
+      background: none;
+      border: none;
+      color: var(--mono-x-dark);
+      font-size: 1.12rem;
+      margin-left: 4px;
+      cursor: pointer;
+      padding: 3px 6px;
+      border-radius: 50%;
+      transition: color var(--transition), background var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+    }
+    #convo-list .action-btn:hover, #convo-list .action-btn:focus {
+      color: var(--mono-x-hover-dark);
+      background: #444;
+    }
+    body.light #convo-list .action-btn {
+      color: var(--mono-x-light);
+    }
+    body.light #convo-list .action-btn:hover, body.light #convo-list .action-btn:focus {
+      color: var(--mono-x-hover-light);
+      background: #ccc;
+    }
+
+    main#chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 420px;
+      padding: 0 0 16px 0;
+      position: relative;
+    }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 32px;
+      margin-bottom: 10px;
+      max-height: 66vh;
+      scrollbar-width: thin;
+    }
+
+    .bubble {
+      max-width: 70%;
+      margin: 14px 0;
+      padding: 16px 22px 25px 22px;
+      border-radius: var(--border-radius);
+      font-size: 1.2rem;
+      word-break: break-word;
+      box-shadow: 0 1px 6px #0002;
+      position: relative;
+      transition: background var(--transition);
+    }
+
+    .bubble.user {
+      background: var(--bubble-user-dark);
+      color: var(--text-dark);
+      align-self: flex-end;
+      margin-left: auto;
+    }
+    body.light .bubble.user {
+      background: var(--bubble-user-light);
+      color: var(--text-light);
+    }
+
+    .bubble.ai {
+      background: var(--bubble-ai-dark);
+      color: var(--text-dark);
+      align-self: flex-start;
+      margin-right: auto;
+    }
+    body.light .bubble.ai {
+      background: var(--bubble-ai-light);
+      color: var(--text-light);
+    }
+
+    .bubble .timestamp {
+      font-size: 0.8rem;
+      color: #aaa;
+      position: absolute;
+      right: 22px;
+      bottom: 8px;
+    }
+
+    .bubble code, .bubble pre {
+      background: #181818;
+      color: #ffd700;
+      border-radius: 8px;
+      font-size: 1em;
+      padding: 5px 8px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+    }
+    body.light .bubble code, body.light .bubble pre {
+      background: #eaeaea;
+      color: #161616;
+    }
+
+    .bubble pre {
+      padding: 14px 18px;
+      margin: 7px 0;
+      white-space: pre-wrap;
+    }
+
+    #chat-form {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 32px 13px 32px;
+    }
+
+    #chat-input {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 22px;
+      border: none;
+      background: #6667;
+      color: var(--text-dark);
+      font-size: 1.19rem;
+      transition: background var(--transition);
+    }
+    body.light #chat-input {
+      color: var(--text-light);
+      background: #ddd7;
+    }
+
+    #send-btn {
+      background: #8887;
+      color: var(--text-dark);
+      border: none;
+      border-radius: 18px;
+      padding: 11px 28px;
+      font-size: 1.12rem;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    body.light #send-btn {
+      color: var(--text-light);
+      background: #ccc7;
+    }
+
+    @media (max-width: 900px) {
+      #chatbot-app {
+        max-width: 98vw;
+      }
+      #messages,
+      #chat-form {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      #chatbot-app {
+        max-width: 100vw;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      #sidebar {
+        width: 80vw;
+        min-width: 190px;
+      }
+      #messages,
+      #chat-form {
+        padding-left: 4vw;
+        padding-right: 4vw;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="chat-container">
-    <button class="toggle-theme" aria-label="Toggle theme"></button>
-    <header>Mini AI Chatbot</header>
+  <div id="chatbot-app">
+    <header>
+      <button id="menu-toggle" aria-label="Open conversations">&#9776;</button>
+      <h1>AI CHATBOT</h1>
+      <button id="theme-toggle" aria-label="Toggle dark/light mode">
+        <span id="theme-icon"></span>
+      </button>
+    </header>
 
-    <div id="chat"></div>
+    <aside id="sidebar" class="hidden">
+      <div class="sidebar-header">
+        <span>Topics</span>
+        <button id="new-convo">+ New Conversation</button>
+      </div>
+      <ul id="convo-list"></ul>
+    </aside>
 
-    <form>
-        <textarea id="input" rows="2" placeholder="Ask me anything..." required></textarea>
-        <button type="submit">Send</button>
-    </form>
+    <main id="chat-container">
+      <div id="messages"></div>
+      <form id="chat-form" autocomplete="off">
+        <input 
+          type="text" 
+          id="chat-input" 
+          autocomplete="off"
+          placeholder="Ask anything..." 
+          required>
+        <button type="submit" id="send-btn">Send</button>
+      </form>
+    </main>
   </div>
+  <script>
 
- <script>
-  const sunIcon = `
-    <svg viewBox="0 0 24 24" fill="#000" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="5" />
-      <g stroke="currentColor" stroke-width="2">
-        <line x1="12" y1="1" x2="12" y2="3"/>
-        <line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/>
-        <line x1="21" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </g>
-    </svg>
-  `;
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m =>
+        m === "&" ? "&amp;" : m === "<" ? "&lt;" : m === ">" ? "&gt;" : m === '"' ? "&quot;" : "&#39;");
+    }
+    function marked(src) {
+      src = src.replace(/```([a-z]*)\n([\s\S]*?)```/g, (m, lang, code) =>
+        `<pre><code class="language-${lang.trim()}">${escapeHtml(code)}</code></pre>`);
+      src = src.replace(/`([^`\n]+)`/g, (m, code) => `<code>${escapeHtml(code)}</code>`);
+      src = src.replace(/\*\*([^*]+)\*\*/g, (m, bold) => `<strong>${bold}</strong>`);
+      src = src.replace(/_([^_]+)_/g, (m, italic) => `<em>${italic}</em>`);
+      src = src.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+      src = src.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+      src = src.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+      src = src.replace(/^(?:-|\*) (.*)$/gm, '<ul><li>$1</li></ul>');
+      src = src.replace(/<\/ul>\s*<ul>/g, '');
+      src = src.replace(/\n{2,}/g, '</p><p>');
+      src = '<p>' + src + '</p>';
+      src = src.replace(/<p>\s*<\/p>/g, '');
+      return src;
+    }
+  </script>
+  <script>
+    const themeBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const sunIcon = `
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <circle cx="12" cy="12" r="5" />
+        <g stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </g>
+      </svg>
+    `;
+    const moonIcon = `
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+      </svg>
+    `;
+    function setTheme(mode) {
+      if (mode === 'light') {
+        document.body.classList.add('light');
+        themeIcon.innerHTML = sunIcon;
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.body.classList.remove('light');
+        themeIcon.innerHTML = moonIcon;
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+    themeBtn.onclick = () => setTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+    setTheme(localStorage.getItem('theme') || 'dark');
 
-  const moonIcon = `
-    <svg viewBox="0 0 24 24" fill="#000" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
-    </svg>
-  `;
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menu-toggle');
+    menuBtn.onclick = (e) => {
+      e.stopPropagation();
+      sidebar.classList.toggle('hidden');
+    };
+    document.body.onclick = function(e) {
+      if (!sidebar.classList.contains('hidden') 
+        && !sidebar.contains(e.target) 
+        && e.target !== menuBtn) sidebar.classList.add('hidden');
+    };
 
-  const endpoint = "https://mini-chatbot-production.up.railway.app/chat";
-  const chatDiv = document.getElementById("chat");
-  const input = document.getElementById("input");
-  const form = document.querySelector("form");
-  const toggleBtn = document.querySelector(".toggle-theme");
-  let isDark = true;
+    let conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
+    let selectedConvo = localStorage.getItem('selectedConvo') || null;
+    const convoList = document.getElementById('convo-list');
 
-  function setDarkMode() {
-    const root = document.documentElement;
-    root.style.setProperty('--bg', '#1e1e1e');
-    root.style.setProperty('--card-bg', '#2a2a2a');
-    root.style.setProperty('--text', '#f0f0f0');
-    root.style.setProperty('--text-muted', '#bbbbbb');
-    root.style.setProperty('--user-bg', '#007bff');
-    root.style.setProperty('--user-color', '#fff');
-    root.style.setProperty('--bot-bg', '#444');
-    root.style.setProperty('--bot-color', '#f0f0f0');
-    root.style.setProperty('--textarea-bg', '#333');
-    toggleBtn.innerHTML = moonIcon;
-    isDark = true;
-  }
+    function renderConvos() {
+      convoList.innerHTML = '';
+      conversations.forEach((c, i) => {
+        const li = document.createElement('li');
+        li.className = i == selectedConvo ? 'selected' : '';
+        li.tabIndex = 0;
+        li.title = "Rename or delete conversation";
+        li.innerHTML = `
+          <span class="convo-title">${escapeHtml(c.title)}</span>
+          <span class="convo-actions">
+            <button class="action-btn edit-btn" title="Rename" aria-label="Rename">&#9998;</button>
+            <button class="action-btn del-btn" title="Delete" aria-label="Delete">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <line x1="5" y1="5" x2="13" y2="13" stroke="currentColor" stroke-width="2" />
+                <line x1="13" y1="5" x2="5" y2="13" stroke="currentColor" stroke-width="2" />
+              </svg>
+            </button>
+          </span>`;
 
-  function setLightMode() {
-    const root = document.documentElement;
-    root.style.setProperty('--bg', '#f4f4f4');
-    root.style.setProperty('--card-bg', '#ffffff');
-    root.style.setProperty('--text', '#1e1e1e');
-    root.style.setProperty('--text-muted', '#555');
-    root.style.setProperty('--user-bg', '#007bff');
-    root.style.setProperty('--user-color', '#fff');
-    root.style.setProperty('--bot-bg', '#eee');
-    root.style.setProperty('--bot-color', '#1e1e1e');
-    root.style.setProperty('--textarea-bg', '#fff');
-    toggleBtn.innerHTML = sunIcon;
-    isDark = false;
-  }
+        li.onclick = (e) => {
+          if (e.target.closest('.del-btn') || e.target.closest('.edit-btn') || li.querySelector('.rename-input')) return;
+          selectedConvo = i;
+          localStorage.setItem('selectedConvo', i);
+          renderConvos();
+          renderMessages();
+          sidebar.classList.add('hidden');
+        };
 
-  function saveMessage(role, text, time = new Date().toLocaleTimeString()) {
-    const saved = JSON.parse(localStorage.getItem("chatHistory")) || [];
-    saved.push({ role, text, time });
-    localStorage.setItem("chatHistory", JSON.stringify(saved));
-  }
+        li.querySelector('.edit-btn').onclick = (e) => {
+          e.stopPropagation();
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = c.title;
+          input.className = 'rename-input';
+          input.onkeydown = (ev) => {
+            if (ev.key === 'Enter' && input.value.trim()) {
+              c.title = input.value.trim();
+              localStorage.setItem('conversations', JSON.stringify(conversations));
+              renderConvos();
+            }
+          };
+          input.onblur = () => {
+            if (input.value.trim()) {
+              c.title = input.value.trim();
+              localStorage.setItem('conversations', JSON.stringify(conversations));
+            }
+            renderConvos();
+          };
+          li.querySelector('.convo-title').replaceWith(input);
+          input.focus();
+          input.select();
+        };
 
-  function renderMessage(role, text, time = new Date().toLocaleTimeString()) {
-    const msg = document.createElement("div");
-    msg.className = `message ${role}`;
-    msg.innerHTML = `<div>${text}</div><div class="timestamp">${time}</div>`;
-    chatDiv.appendChild(msg);
-    chatDiv.scrollTop = chatDiv.scrollHeight;
-  }
-
-  function showTyping() {
-    const typing = document.createElement("div");
-    typing.className = "message bot typing";
-    typing.innerText = "Typing...";
-    typing.id = "typing";
-    chatDiv.appendChild(typing);
-    chatDiv.scrollTop = chatDiv.scrollHeight;
-  }
-
-  function removeTyping() {
-    const typing = document.getElementById("typing");
-    if (typing) typing.remove();
-  }
-
-  async function sendMessage(e) {
-    e.preventDefault();
-    const msg = input.value.trim();
-    if (!msg) return;
-
-    renderMessage("user", msg);
-    saveMessage("user", msg);
-    input.value = "";
-    showTyping();
-
-    try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ msg }),
+        li.querySelector('.del-btn').onclick = (e) => {
+          e.stopPropagation();
+          conversations.splice(i, 1);
+          if (selectedConvo >= conversations.length) selectedConvo = conversations.length-1;
+          if (selectedConvo < 0) selectedConvo = 0;
+          localStorage.setItem('conversations', JSON.stringify(conversations));
+          localStorage.setItem('selectedConvo', selectedConvo);
+          renderConvos(); renderMessages();
+        };
+        convoList.appendChild(li);
       });
+    }
+    document.getElementById('new-convo').onclick = () => {
+      conversations.push({ title: 'New Conversation', messages: [] });
+      selectedConvo = conversations.length-1;
+      localStorage.setItem('conversations', JSON.stringify(conversations));
+      localStorage.setItem('selectedConvo', selectedConvo);
+      renderConvos(); renderMessages();
+    };
+    if (!Array.isArray(conversations) || !conversations.length) {
+      conversations = [{ title: 'Welcome', messages: [] }];
+      selectedConvo = 0;
+      localStorage.setItem('conversations', JSON.stringify(conversations));
+      localStorage.setItem('selectedConvo', 0);
+    }
+    renderConvos();
 
-      if (!res.ok) throw new Error(`Server returned ${res.status}`);
+    const endpoint = "https://mini-chatbot-production.up.railway.app/chat";
+    const messagesDiv = document.getElementById('messages');
+    function renderMessages() {
+      messagesDiv.innerHTML = '';
+      let convo = conversations[selectedConvo];
+      if (!convo) return;
+      convo.messages.forEach(msg => {
+        const bubble = document.createElement('div');
+        bubble.className = `bubble ${msg.role}`;
 
-      const data = await res.json();
-      const reply = data?.reply || "⚠️ No reply received.";
+        if (msg.role === 'ai') {
+          bubble.innerHTML = marked(msg.content || "");
+        } else {
+          bubble.textContent = msg.content;
+        }
 
-      setTimeout(() => {
+        const ts = document.createElement('div');
+        ts.className = 'timestamp';
+        ts.textContent = msg.time;
+        bubble.appendChild(ts);
+        messagesDiv.appendChild(bubble);
+      });
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    renderMessages();
+
+    function showTyping() {
+      let typing = document.createElement('div');
+      typing.className = 'bubble ai';
+      typing.id = 'typing-bubble';
+      typing.innerHTML = '<em>Typing...</em>';
+      messagesDiv.appendChild(typing);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    function removeTyping() {
+      let typing = document.getElementById('typing-bubble');
+      if (typing) typing.remove();
+    }
+
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    chatForm.onsubmit = async function(e) {
+      e.preventDefault();
+      let text = chatInput.value.trim();
+      if (!text) return;
+      if (!conversations[selectedConvo]) return;
+      if (/^clear$/i.test(text)) {
+        conversations[selectedConvo].messages = [];
+        saveChat();
+        renderMessages();
+        chatInput.value = '';
+        return;
+      }
+
+      const now = new Date();
+      const time = now.toLocaleTimeString([], { hour12: false });
+      conversations[selectedConvo].messages.push({
+        role: 'user',
+        content: text,
+        time
+      });
+      renderMessages();
+      chatInput.value = '';
+      saveChat();
+      showTyping();
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ msg: text }),
+        });
         removeTyping();
-        renderMessage("bot", reply);
-        saveMessage("bot", reply);
-      }, 1000 + Math.random() * 1000);
 
-    } catch (err) {
-      removeTyping();
-      const errorMsg = `⚠️ Error: ${err.message}`;
-      renderMessage("bot", errorMsg);
-      saveMessage("bot", errorMsg);
-      console.error(err);
-    }
-  }
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
 
-  document.addEventListener("DOMContentLoaded", () => {
-    setDarkMode();
-  
-    const saved = JSON.parse(localStorage.getItem("chatHistory")) || [];
-    saved.forEach(({ role, text, time }) => renderMessage(role, text, time));
-  
-    if (toggleBtn) {
-      toggleBtn.onclick = () => {
-        isDark ? setLightMode() : setDarkMode();
-      };
-    }
-  
-    if (form) {
-      form.addEventListener("submit", sendMessage);
-    }
-  });
+        const data = await res.json();
+        const reply = data?.reply || "⚠️ No reply received.";
 
-</script>
+        conversations[selectedConvo].messages.push({
+          role: 'ai',
+          content: reply,
+          time: new Date().toLocaleTimeString([], { hour12: false })
+        });
+        saveChat();
+        renderMessages();
+      } catch (err) {
+        removeTyping();
+        const errorMsg = `⚠️ Error: ${err.message}`;
+        conversations[selectedConvo].messages.push({
+          role: 'ai',
+          content: errorMsg,
+          time: new Date().toLocaleTimeString([], { hour12: false })
+        });
+        saveChat();
+        renderMessages();
+      }
+    };
+    function saveChat() {
+      localStorage.setItem('conversations', JSON.stringify(conversations));
+    }
+
+    chatInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        chatForm.dispatchEvent(new Event('submit'));
+        e.preventDefault();
+      }
+    });
+  </script>
 </body>
 </html>
