@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)  # Handles CORS for all routes
 
 # Your Google Apps Script Web App endpoint
-APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbzICKJZzRUzLu_VgR-N3ccbjZVq7NMU_tfkv4NnXpSunkARdLSesttJ3RskZvKLw5KX/exec"
+APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbwsFAXK8Dxjnh5O8V8j0jdjMjMBY46TxrSr8Rpw4SN-xjLA67Jf9746yHuiZ1C0RHw3/exec"
 
 @app.route("/chat", methods=["POST"])
 def chat():
