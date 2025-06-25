@@ -22,6 +22,7 @@ Website Link: [mini-chatbotv2](https://8oruz7.github.io/mini-chatbot)
   - Edit your sent messages
   - Copy AI chatbot responses with a single click
   - React to AI replies with emojis (including custom emoji support)
+  - `clear`, `Clear`, or `CLEAR` keyword clean the conversation in selected conversation
 
 - **AI Chatbot Capabilities**
   - Responds to the most recently edited user question
